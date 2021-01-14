@@ -18,12 +18,8 @@ import org.bukkit.scoreboard.Scoreboard;
 public final class Skywars extends JavaPlugin implements Listener {
 
 
-    private Scoreboard mainScoreboard;
-
     @Override
     public void onEnable() {
-        mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-        mainScoreboard.registerNewObjective("kills", "dummy");
         Bukkit.getPluginManager().registerEvents(this, this);
         getCommand("sw").setExecutor(new SkyWarsCommand(this));
         getLogger().info("enabled");
@@ -40,17 +36,24 @@ public final class Skywars extends JavaPlugin implements Listener {
 
     //void for get kills if player kill someone in game
     private int getKills(Player p) {
-        Objective o = mainScoreboard.getObjective("kills");
+        Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+        Objective o = main.getObjective("kills");
+        return o.getScore(p.getName()).getScore();
+    }
+
+    //void for get death of player in game
+    private int getDeaths(Player p) {
+        Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+        Objective o = main.getObjective("deaths");
+        if (o == null) o = main.registerNewObjective("deaths", "deathCount");
         return o.getScore(p.getName()).getScore();
     }
 
     //if entity death, this working
     @EventHandler
-    public void m(PlayerDeathEvent e) {
+    public void m(EntityDeathEvent e) {
         Player p = e.getEntity().getKiller();
         if (p == null) return;
-        int previousValue = mainScoreboard.getObjective("kills").getScore(e.getEntity().getName()).getScore();
-        mainScoreboard.getObjective("kills").getScore(e.getEntity().getName()).setScore(previousValue + 1);
         updateScoreboard(p);
     }
 
@@ -62,7 +65,15 @@ public final class Skywars extends JavaPlugin implements Listener {
         statsObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
         statsObjective.setDisplayName("stats");
         statsObjective.getScore("kills: " + getKills(p)).setScore(1);
+        statsObjective.getScore("deaths: " + getDeaths(p)).setScore(0);
         p.setScoreboard(scoreboard);
+    }
+
+    @EventHandler
+    public void death(PlayerDeathEvent e) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+            updateScoreboard(e.getEntity());
+        });
     }
     
     @EventHandler
