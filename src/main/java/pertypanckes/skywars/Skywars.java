@@ -8,7 +8,9 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Criterias;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -72,6 +74,13 @@ public final class Skywars extends JavaPlugin implements Listener {
         Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
             updateScoreboard(e.getEntity());
         });
+    }
+    
+    @EventHandler
+    public void quit(PlayerQuitEvent event) {
+        Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+        Objective o = main.getObjective("kills");
+        o.getScore(event.getPlayer().getName()).setScore(0);
     }
 
     @Override
