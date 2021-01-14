@@ -23,6 +23,10 @@ public final class Skywars extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        Objective kills = mainScoreboard.getObjective("kills");
+        if (kills != null) {
+            kills.unregister();
+        }
         mainScoreboard.registerNewObjective("kills", "dummy");
         Bukkit.getPluginManager().registerEvents(this, this);
         getCommand("sw").setExecutor(new SkyWarsCommand(this));
