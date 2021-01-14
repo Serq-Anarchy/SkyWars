@@ -57,7 +57,7 @@ public final class Skywars extends JavaPlugin implements Listener {
 
     //updating scoreboard when player killing someone
     private void updateScoreboard(Player p) {
-        Scoreboard scoreboard = p.getScoreboard();
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         scoreboard.clearSlot(DisplaySlot.SIDEBAR);
         Objective statsObjective = scoreboard.registerNewObjective("stats", "dummy");
         statsObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
