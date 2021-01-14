@@ -1,0 +1,8 @@
+name: Skywars
+version: 1.1
+main: pertypanckes.skywars.Skywars
+prefix: SkyWars
+commands:
+  sw:
+    usage: /sw
+    aliases: [skywars, св, скайварс]
